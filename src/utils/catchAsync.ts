@@ -1,21 +1,20 @@
-import { NextFunction, Request, RequestHandler, Response } from "express";
-import httpstatus from "http-status";
+import type { NextFunction, Request, RequestHandler, Response } from "express";
 
+/**
+ * Higher-order function wrapping async Express route handlers.
+ * Any rejected promise or thrown error is passed forward to next()
+ * for centralized handling in globalErrorHandler.
+ */
 export const catchAsync = (fn: RequestHandler) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        
-        await fn(req, res, next);
-        
-    } catch (error) {
-      console.log(error);
-
-      res.status(httpstatus.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        statusCode: httpstatus.INTERNAL_SERVER_ERROR,
-        message: "Internal server error",
-        error: (error as Error).message,
-      });
-    }
-  };
+	return async (
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	): Promise<void> => {
+		try {
+			await fn(req, res, next);
+		} catch (error) {
+			next(error);
+		}
+	};
 };

@@ -9,8 +9,8 @@
 		"ignoreUnknown": false,
 		"includes": [
 			"**",
-			"!src/app/templates",
-			"!src/generated"
+			"!dist",
+			"!generated"
 		]
 	},
 	"formatter": {
@@ -43,8 +43,8 @@
 		},
 		"includes": [
 			"**",
-			"!src/app/templates",
-			"!src/generated"
+			"!dist",
+			"!generated"
 		]
 	},
 	"javascript": {
