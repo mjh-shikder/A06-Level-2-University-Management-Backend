@@ -4,6 +4,7 @@ import { authRoutes } from "../modules/auth/auth.routes";
 import { courseRoutes } from "../modules/course/course.routes";
 import { departmentRoutes } from "../modules/department/department.routes";
 import { programRoutes } from "../modules/program/program.routes";
+import { semesterRoutes } from "../modules/semester/semester.routes";
 import { userRoutes } from "../modules/user/user.routes";
 import { sendResponse } from "../utils/sendResponse";
 
@@ -39,5 +40,8 @@ router.use("/programs", programRoutes);
 
 // Course routes
 router.use("/courses", courseRoutes);
+
+// Semester routes
+router.use("/semesters", semesterRoutes);
 
 export const apiRoutes = router;

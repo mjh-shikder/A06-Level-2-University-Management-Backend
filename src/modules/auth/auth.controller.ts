@@ -63,7 +63,7 @@ const refreshToken = catchAsync(async (req: Request, res: Response) => {
 		httpOnly: true,
 		secure: config.env === "production",
 		sameSite: "strict",
-		maxAge: 15 * 60 * 1000,
+		maxAge: 1 * 24 * 60 * 60 * 1000,
 	});
 
 	// Overwrite existing cookie with rotated refresh token

@@ -231,7 +231,7 @@ const login = async (payload: TLoginPayload): Promise<TLoginResponse> => {
 	};
 
 	const accessToken = jwt.sign(jwtPayload, config.jwt.accessSecret, {
-		expiresIn: "15m",
+		expiresIn: "1d",
 	});
 
 	const refreshToken = jwt.sign(jwtPayload, config.jwt.refreshSecret, {
