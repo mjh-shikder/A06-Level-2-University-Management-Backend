@@ -57,6 +57,21 @@ const globalLimiter = rateLimit({
 });
 app.use(globalLimiter);
 
+// Stricter Rate Limiter for authentication routes: max 20 requests per 15 minutes per IP
+const authLimiter = rateLimit({
+	windowMs: 15 * 60 * 1000,
+	limit: 20,
+	standardHeaders: true,
+	legacyHeaders: false,
+	message: {
+		success: false,
+		message:
+			"Too many authentication attempts from this IP, please try again after 15 minutes",
+		errors: [{ message: "Auth rate limit exceeded" }],
+	},
+});
+app.use("/api/v1/auth", authLimiter);
+
 // Root informational endpoint
 app.get("/", (_req, res) => {
 	res.status(httpStatus.OK).json({

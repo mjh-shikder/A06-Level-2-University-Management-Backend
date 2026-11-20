@@ -52,26 +52,50 @@ export const prisma = basePrisma.$extends({
 				return query(args);
 			},
 			async findUnique({ model, args, query }) {
+				const isSoftDelete = SOFT_DELETE_MODELS.has(model);
+				const originalSelect = args.select ? { ...args.select } : null;
+				if (isSoftDelete && args.select) {
+					args.select = { ...args.select, deletedAt: true };
+				}
 				const result = await query(args);
 				if (
-					SOFT_DELETE_MODELS.has(model) &&
+					isSoftDelete &&
 					result &&
-					(result as { deletedAt?: Date | null }).deletedAt !== null
+					(result as { deletedAt?: Date | null }).deletedAt != null
 				) {
 					return null;
+				}
+				if (
+					result &&
+					originalSelect &&
+					!(originalSelect as Record<string, unknown>).deletedAt
+				) {
+					delete (result as Record<string, unknown>).deletedAt;
 				}
 				return result;
 			},
 			async findUniqueOrThrow({ model, args, query }) {
+				const isSoftDelete = SOFT_DELETE_MODELS.has(model);
+				const originalSelect = args.select ? { ...args.select } : null;
+				if (isSoftDelete && args.select) {
+					args.select = { ...args.select, deletedAt: true };
+				}
 				const result = await query(args);
 				if (
-					SOFT_DELETE_MODELS.has(model) &&
+					isSoftDelete &&
 					result &&
-					(result as { deletedAt?: Date | null }).deletedAt !== null
+					(result as { deletedAt?: Date | null }).deletedAt != null
 				) {
 					const error = new Error(`No ${model} found`);
 					(error as { code?: string }).code = "P2025";
 					throw error;
+				}
+				if (
+					result &&
+					originalSelect &&
+					!(originalSelect as Record<string, unknown>).deletedAt
+				) {
+					delete (result as Record<string, unknown>).deletedAt;
 				}
 				return result;
 			},

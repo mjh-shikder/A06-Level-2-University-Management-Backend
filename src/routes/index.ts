@@ -1,5 +1,6 @@
 import { Router } from "express";
 import httpStatus from "http-status";
+import { authRoutes } from "../modules/auth/auth.routes";
 import { sendResponse } from "../utils/sendResponse";
 
 const router = Router();
@@ -19,5 +20,8 @@ router.get("/health", (_req, res) => {
 		},
 	});
 });
+
+// Authentication routes
+router.use("/auth", authRoutes);
 
 export const apiRoutes = router;
