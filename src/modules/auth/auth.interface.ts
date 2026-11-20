@@ -22,3 +22,8 @@ export type TLoginResponse = {
 		role: string;
 	};
 };
+
+export type TRefreshTokenResponse = {
+	accessToken: string;
+	newRefreshToken: string;
+};

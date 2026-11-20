@@ -44,7 +44,85 @@ const login = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
+/**
+ * Rotate refresh token and issue new access token.
+ */
+const refreshToken = catchAsync(async (req: Request, res: Response) => {
+	const currentRefreshToken = req.cookies?.refreshToken;
+	const result = await authService.refreshToken(currentRefreshToken);
+
+	// Overwrite existing cookie with rotated refresh token
+	res.cookie("refreshToken", result.newRefreshToken, {
+		httpOnly: true,
+		secure: config.env === "production",
+		sameSite: "strict",
+		maxAge: 7 * 24 * 60 * 60 * 1000,
+	});
+
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: "Access token refreshed successfully",
+		data: {
+			accessToken: result.accessToken,
+		},
+	});
+});
+
+/**
+ * Handle user logout: revoke refresh token and clear cookie.
+ */
+const logout = catchAsync(async (req: Request, res: Response) => {
+	const currentRefreshToken = req.cookies?.refreshToken;
+	await authService.logout(currentRefreshToken);
+
+	res.clearCookie("refreshToken", {
+		httpOnly: true,
+		secure: config.env === "production",
+		sameSite: "strict",
+	});
+
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: "User logged out successfully",
+		data: null,
+	});
+});
+
+/**
+ * Retrieve authenticated user's current profile.
+ */
+const getMe = catchAsync(async (req: Request, res: Response) => {
+	const result = await authService.getMe(req.user.id);
+
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: "User profile retrieved successfully",
+		data: result,
+	});
+});
+
+/**
+ * Demo RBAC protected endpoint accessible only by ADMIN role.
+ */
+const adminDemo = catchAsync(async (req: Request, res: Response) => {
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: "Admin RBAC authorization verified successfully",
+		data: {
+			user: req.user,
+		},
+	});
+});
+
 export const authController = {
 	register,
 	login,
+	refreshToken,
+	logout,
+	getMe,
+	adminDemo,
 };

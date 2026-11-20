@@ -45,7 +45,7 @@ app.use(cookieParser());
 // Global Rate Limiter: max 100 requests per 15 minutes per IP
 const globalLimiter = rateLimit({
 	windowMs: 15 * 60 * 1000,
-	limit: 100,
+	limit: 1000,
 	standardHeaders: true,
 	legacyHeaders: false,
 	message: {
