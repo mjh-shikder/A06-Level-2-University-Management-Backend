@@ -1,0 +1,21 @@
+model User {
+  id                String             @id @default(uuid()) @db.Uuid
+  email             String             @unique
+  passwordHash      String
+  firstName         String
+  lastName          String
+  role              Role               @default(STUDENT)
+  status            UserStatus         @default(ACTIVE)
+  deletedAt         DateTime?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  studentProfile    StudentProfile?
+  instructorProfile InstructorProfile?
+  refreshTokens     RefreshToken[]
+  auditLogs         AuditLog[]
+
+  @@index([role])
+  @@index([status])
+  @@index([deletedAt])
+}
