@@ -1,6 +1,7 @@
 import { Router } from "express";
 import httpStatus from "http-status";
 import { authRoutes } from "../modules/auth/auth.routes";
+import { courseRoutes } from "../modules/course/course.routes";
 import { departmentRoutes } from "../modules/department/department.routes";
 import { programRoutes } from "../modules/program/program.routes";
 import { userRoutes } from "../modules/user/user.routes";
@@ -35,5 +36,8 @@ router.use("/departments", departmentRoutes);
 
 // Program routes
 router.use("/programs", programRoutes);
+
+// Course routes
+router.use("/courses", courseRoutes);
 
 export const apiRoutes = router;

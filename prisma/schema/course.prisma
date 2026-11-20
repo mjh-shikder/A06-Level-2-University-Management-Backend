@@ -1,0 +1,32 @@
+model Course {
+  id          String               @id @default(uuid()) @db.Uuid
+  title       String
+  code        String               @unique
+  credits     Int
+  programId   String               @db.Uuid
+  description String?
+  deletedAt   DateTime?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  program         Program              @relation(fields: [programId], references: [id], onDelete: Restrict)
+  prerequisites   CoursePrerequisite[] @relation("CoursePrerequisites")
+  prerequisiteFor CoursePrerequisite[] @relation("CoursePrerequisiteFor")
+
+  @@index([title])
+  @@index([programId])
+  @@index([deletedAt])
+}
+
+model CoursePrerequisite {
+  courseId       String   @db.Uuid
+  prerequisiteId String   @db.Uuid
+  createdAt      DateTime @default(now())
+
+  course       Course @relation("CoursePrerequisites", fields: [courseId], references: [id], onDelete: Cascade)
+  prerequisite Course @relation("CoursePrerequisiteFor", fields: [prerequisiteId], references: [id], onDelete: Cascade)
+
+  @@id([courseId, prerequisiteId])
+  @@index([courseId])
+  @@index([prerequisiteId])
+}

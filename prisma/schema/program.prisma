@@ -10,6 +10,7 @@ model Program {
 
   department      Department       @relation(fields: [departmentId], references: [id], onDelete: Restrict)
   students        StudentProfile[]
+  courses         Course[]
 
   @@index([name])
   @@index([departmentId])
