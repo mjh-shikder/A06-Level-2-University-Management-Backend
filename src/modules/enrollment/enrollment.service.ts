@@ -1,11 +1,15 @@
 import httpStatus from "http-status";
+import type { Prisma, Role } from "../../../generated/prisma/client";
 import config from "../../config";
 import { AppError } from "../../errors/AppError";
 import { prisma } from "../../lib/prisma";
 import { createAuditLog } from "../../utils/auditLog";
+import { buildPaginationMeta, calculatePagination } from "../../utils/paginate";
 import type {
 	TEnrollSectionPayload,
+	TMyEnrollmentsFilterOptions,
 	TScheduleSlot,
+	TSectionStudentsFilterOptions,
 } from "./enrollment.interface";
 
 /**
@@ -362,6 +366,352 @@ const enrollSection = async (
 	});
 };
 
+/**
+ * Drop an enrollment for the authenticated student within the allowed drop window.
+ *
+ * Transactional Validations:
+ * 1. Authenticated user has an ACTIVE student profile.
+ * 2. Enrollment exists and belongs to the requesting student.
+ * 3. Enrollment status must be ENROLLED (cannot drop if already DROPPED or COMPLETED).
+ * 4. Associated semester is ACTIVE and drop window has not closed (registrationEnd).
+ * 5. Section's enrolledCount is decremented by 1.
+ * 6. Enrollment status is updated to DROPPED with droppedAt timestamp.
+ * 7. Audit log is recorded for the drop action.
+ *
+ * @param enrollmentId ID of the enrollment record to drop
+ * @param userId ID of the authenticated user (must own this enrollment)
+ * @param ip Optional client IP address
+ */
+const dropEnrollment = async (
+	enrollmentId: string,
+	userId: string,
+	ip?: string,
+) => {
+	return prisma.$transaction(async (tx) => {
+		// 1. Identify StudentProfile for the requesting user
+		const studentProfile = await tx.studentProfile.findUnique({
+			where: { userId },
+		});
+
+		if (!studentProfile) {
+			throw new AppError(
+				httpStatus.NOT_FOUND,
+				"Student profile not found for authenticated user",
+			);
+		}
+
+		// 2. Fetch enrollment with section and semester
+		const enrollment = await tx.enrollment.findUnique({
+			where: { id: enrollmentId },
+			include: {
+				section: {
+					include: {
+						semester: true,
+						course: {
+							select: {
+								id: true,
+								code: true,
+								title: true,
+								credits: true,
+							},
+						},
+					},
+				},
+			},
+		});
+
+		if (!enrollment) {
+			throw new AppError(httpStatus.NOT_FOUND, "Enrollment record not found");
+		}
+
+		// 3. Verify ownership: must belong to the requesting student
+		if (enrollment.studentId !== studentProfile.id) {
+			throw new AppError(
+				httpStatus.FORBIDDEN,
+				"You are not authorized to drop this enrollment",
+			);
+		}
+
+		// 4. Verify enrollment status is ENROLLED
+		if (enrollment.status === "DROPPED") {
+			throw new AppError(
+				httpStatus.BAD_REQUEST,
+				"Enrollment has already been dropped",
+			);
+		}
+
+		if (enrollment.status === "COMPLETED") {
+			throw new AppError(
+				httpStatus.BAD_REQUEST,
+				"Completed course enrollment cannot be dropped",
+			);
+		}
+
+		if (enrollment.status !== "ENROLLED") {
+			throw new AppError(
+				httpStatus.BAD_REQUEST,
+				`Enrollment with status '${enrollment.status}' cannot be dropped`,
+			);
+		}
+
+		// 5. Check semester and drop deadline
+		const semester = enrollment.section.semester;
+		const now = new Date();
+
+		if (semester.status !== "ACTIVE") {
+			throw new AppError(
+				httpStatus.BAD_REQUEST,
+				"Cannot drop course from an inactive semester",
+			);
+		}
+
+		if (semester.registrationEnd && now > semester.registrationEnd) {
+			throw new AppError(
+				httpStatus.BAD_REQUEST,
+				"Course drop deadline has passed for this semester",
+			);
+		}
+
+		// 6. Lock section row and decrement enrolledCount
+		await tx.$queryRaw<Array<{ id: string }>>`
+			SELECT "id" FROM "Section" WHERE "id" = ${enrollment.sectionId}::uuid FOR UPDATE
+		`;
+
+		if (enrollment.section.enrolledCount > 0) {
+			await tx.section.update({
+				where: { id: enrollment.sectionId },
+				data: {
+					enrolledCount: { decrement: 1 },
+				},
+			});
+		}
+
+		// 7. Update enrollment status to DROPPED
+		const updatedEnrollment = await tx.enrollment.update({
+			where: { id: enrollment.id },
+			data: {
+				status: "DROPPED",
+				droppedAt: now,
+			},
+			include: enrollmentInclude,
+		});
+
+		// 8. Create audit log
+		await createAuditLog(tx, {
+			actorId: userId,
+			action: "DROP",
+			entity: "Enrollment",
+			entityId: enrollment.id,
+			before: {
+				status: enrollment.status,
+			},
+			after: {
+				status: "DROPPED",
+				droppedAt: now,
+			},
+			ip,
+		});
+
+		return updatedEnrollment;
+	});
+};
+
+/**
+ * Retrieve a paginated list of enrollments for the authenticated student.
+ * Supports filtering by semesterId and enrollment status.
+ *
+ * @param options Query filters including page, limit, sortBy, order, semesterId, status
+ * @param userId ID of the authenticated user (student)
+ */
+const getMyEnrollments = async (
+	options: TMyEnrollmentsFilterOptions,
+	userId: string,
+) => {
+	const studentProfile = await prisma.studentProfile.findUnique({
+		where: { userId },
+	});
+
+	if (!studentProfile) {
+		throw new AppError(
+			httpStatus.NOT_FOUND,
+			"Student profile not found for authenticated user",
+		);
+	}
+
+	const normalizedOptions = {
+		...options,
+		order: options.order || options.sortOrder,
+	};
+	const { page, limit, skip, sortBy, order } = calculatePagination(
+		normalizedOptions,
+		"enrolledAt",
+	);
+
+	const where: Prisma.EnrollmentWhereInput = {
+		studentId: studentProfile.id,
+		deletedAt: null,
+		...(options.status && { status: options.status }),
+		...(options.semesterId && {
+			section: {
+				semesterId: options.semesterId,
+			},
+		}),
+	};
+
+	const [total, data] = await Promise.all([
+		prisma.enrollment.count({ where }),
+		prisma.enrollment.findMany({
+			where,
+			skip,
+			take: limit,
+			orderBy: { [sortBy]: order },
+			include: {
+				section: {
+					include: {
+						course: {
+							select: {
+								id: true,
+								code: true,
+								title: true,
+								credits: true,
+							},
+						},
+						semester: {
+							select: {
+								id: true,
+								name: true,
+								year: true,
+								term: true,
+								status: true,
+							},
+						},
+						instructor: {
+							select: {
+								id: true,
+								employeeId: true,
+								user: {
+									select: {
+										id: true,
+										firstName: true,
+										lastName: true,
+										email: true,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		}),
+	]);
+
+	const meta = buildPaginationMeta(total, page, limit);
+
+	return { meta, data };
+};
+
+/**
+ * Retrieve student roster for a section.
+ * - ADMIN can view any section roster.
+ * - INSTRUCTOR can only view roster for sections assigned to them.
+ *
+ * @param sectionId ID of the course section
+ * @param options Query filters including page, limit, sortBy, order, status
+ * @param user Authenticated user info (id, role)
+ */
+const getSectionStudents = async (
+	sectionId: string,
+	options: TSectionStudentsFilterOptions,
+	user: { id: string; role: Role },
+) => {
+	const section = await prisma.section.findUnique({
+		where: { id: sectionId },
+		include: {
+			instructor: true,
+		},
+	});
+
+	if (!section) {
+		throw new AppError(httpStatus.NOT_FOUND, "Course section not found");
+	}
+
+	if (user.role === "INSTRUCTOR") {
+		const instructorProfile = await prisma.instructorProfile.findUnique({
+			where: { userId: user.id },
+		});
+
+		if (!instructorProfile) {
+			throw new AppError(
+				httpStatus.FORBIDDEN,
+				"Instructor profile not found for user",
+			);
+		}
+
+		if (section.instructorId !== instructorProfile.id) {
+			throw new AppError(
+				httpStatus.FORBIDDEN,
+				"You are not assigned as the instructor for this section",
+			);
+		}
+	}
+
+	const normalizedOptions = {
+		...options,
+		order: options.order || options.sortOrder,
+	};
+	const { page, limit, skip, sortBy, order } = calculatePagination(
+		normalizedOptions,
+		"enrolledAt",
+	);
+
+	const where: Prisma.EnrollmentWhereInput = {
+		sectionId,
+		deletedAt: null,
+		...(options.status && { status: options.status }),
+	};
+
+	const [total, data] = await Promise.all([
+		prisma.enrollment.count({ where }),
+		prisma.enrollment.findMany({
+			where,
+			skip,
+			take: limit,
+			orderBy: { [sortBy]: order },
+			include: {
+				student: {
+					select: {
+						id: true,
+						studentId: true,
+						enrollmentYear: true,
+						user: {
+							select: {
+								id: true,
+								firstName: true,
+								lastName: true,
+								email: true,
+							},
+						},
+						program: {
+							select: {
+								id: true,
+								name: true,
+								code: true,
+							},
+						},
+					},
+				},
+			},
+		}),
+	]);
+
+	const meta = buildPaginationMeta(total, page, limit);
+
+	return { meta, data };
+};
+
 export const enrollmentService = {
 	enrollSection,
+	dropEnrollment,
+	getMyEnrollments,
+	getSectionStudents,
 };

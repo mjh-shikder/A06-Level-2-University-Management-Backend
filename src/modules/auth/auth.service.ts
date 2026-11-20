@@ -345,7 +345,7 @@ const refreshToken = async (token: string): Promise<TRefreshTokenResponse> => {
 	};
 
 	const newAccessToken = jwt.sign(jwtPayload, config.jwt.accessSecret, {
-		expiresIn: "15m",
+		expiresIn: "1d",
 	});
 
 	const newRefreshToken = jwt.sign(jwtPayload, config.jwt.refreshSecret, {

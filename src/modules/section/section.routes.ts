@@ -2,6 +2,8 @@ import { Router } from "express";
 import { authenticate } from "../../middleware/authenticate";
 import { authorize } from "../../middleware/authorize";
 import { validate } from "../../middleware/validate";
+import { enrollmentController } from "../enrollment/enrollment.controller";
+import { enrollmentValidation } from "../enrollment/enrollment.validation";
 import { sectionController } from "./section.controller";
 import { sectionValidation } from "./section.validation";
 
@@ -39,6 +41,18 @@ router.get(
 	authenticate,
 	validate(sectionValidation.getSectionSchema),
 	sectionController.getSectionById,
+);
+
+/**
+ * GET /api/v1/sections/:id/students
+ * List enrolled students in a section (ADMIN, INSTRUCTOR)
+ */
+router.get(
+	"/:id/students",
+	authenticate,
+	authorize("ADMIN", "INSTRUCTOR"),
+	validate(enrollmentValidation.getSectionStudentsSchema),
+	enrollmentController.getSectionStudents,
 );
 
 /**

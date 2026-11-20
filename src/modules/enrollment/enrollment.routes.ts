@@ -19,4 +19,40 @@ router.post(
 	enrollmentController.enrollSection,
 );
 
+/**
+ * GET /api/v1/enrollments/my
+ * List current student's enrollments with optional semesterId and status filters (STUDENT only)
+ */
+router.get(
+	"/my",
+	authenticate,
+	authorize("STUDENT"),
+	validate(enrollmentValidation.getMyEnrollmentsSchema),
+	enrollmentController.getMyEnrollments,
+);
+
+/**
+ * PATCH /api/v1/enrollments/:id/drop
+ * Drop an enrollment within drop deadline (STUDENT only)
+ */
+router.patch(
+	"/:id/drop",
+	authenticate,
+	authorize("STUDENT"),
+	validate(enrollmentValidation.dropEnrollmentSchema),
+	enrollmentController.dropEnrollment,
+);
+
+/**
+ * GET /api/v1/enrollments/section/:sectionId
+ * List enrolled students in a section (ADMIN, INSTRUCTOR)
+ */
+router.get(
+	"/section/:sectionId",
+	authenticate,
+	authorize("ADMIN", "INSTRUCTOR"),
+	validate(enrollmentValidation.getSectionStudentsBySectionIdSchema),
+	enrollmentController.getSectionStudents,
+);
+
 export const enrollmentRoutes = router;
