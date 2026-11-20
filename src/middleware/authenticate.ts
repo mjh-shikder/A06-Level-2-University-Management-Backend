@@ -15,7 +15,7 @@ type TDecodedUser = {
 };
 
 /**
- * Authentication middleware that verifies JWT Bearer tokens from the Authorization header.
+ * Authentication middleware that verifies access tokens from a cookie or Bearer header.
  * Validates token signature, expiration, and ensures user remains active in the database.
  * Attaches the verified user payload to req.user.
  */
@@ -25,16 +25,12 @@ export const authenticate = async (
 	next: NextFunction,
 ): Promise<void> => {
 	try {
-		const authHeader = req.headers.authorization;
-
-		if (!authHeader?.startsWith("Bearer ")) {
-			throw new AppError(
-				httpStatus.UNAUTHORIZED,
-				"You are not authorized to access this route",
-			);
-		}
-
-		const token = authHeader.split(" ")[1];
+		const authorization = req.headers.authorization;
+		const token =
+			req.cookies?.accessToken ??
+			(authorization?.startsWith("Bearer ")
+				? authorization.slice("Bearer ".length)
+				: undefined);
 
 		if (!token) {
 			throw new AppError(

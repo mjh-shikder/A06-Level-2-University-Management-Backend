@@ -1,6 +1,7 @@
 import { Router } from "express";
 import httpStatus from "http-status";
 import { authRoutes } from "../modules/auth/auth.routes";
+import { departmentRoutes } from "../modules/department/department.routes";
 import { userRoutes } from "../modules/user/user.routes";
 import { sendResponse } from "../utils/sendResponse";
 
@@ -27,5 +28,8 @@ router.use("/auth", authRoutes);
 
 // User profile & management routes
 router.use("/users", userRoutes);
+
+// Department routes
+router.use("/departments", departmentRoutes);
 
 export const apiRoutes = router;

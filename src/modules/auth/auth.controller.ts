@@ -25,6 +25,13 @@ const register = catchAsync(async (req: Request, res: Response) => {
 const login = catchAsync(async (req: Request, res: Response) => {
 	const result = await authService.login(req.body);
 
+	res.cookie("accessToken", result.accessToken, {
+		httpOnly: true,
+		secure: config.env === "production",
+		sameSite: "strict",
+		maxAge: 15 * 60 * 1000,
+	});
+
 	// Set refresh token in secure, httpOnly cookie
 	res.cookie("refreshToken", result.refreshToken, {
 		httpOnly: true,
@@ -39,6 +46,7 @@ const login = catchAsync(async (req: Request, res: Response) => {
 		message: "User logged in successfully",
 		data: {
 			accessToken: result.accessToken,
+			refreshToken: result.refreshToken,
 			user: result.user,
 		},
 	});
@@ -50,6 +58,13 @@ const login = catchAsync(async (req: Request, res: Response) => {
 const refreshToken = catchAsync(async (req: Request, res: Response) => {
 	const currentRefreshToken = req.cookies?.refreshToken;
 	const result = await authService.refreshToken(currentRefreshToken);
+
+	res.cookie("accessToken", result.accessToken, {
+		httpOnly: true,
+		secure: config.env === "production",
+		sameSite: "strict",
+		maxAge: 15 * 60 * 1000,
+	});
 
 	// Overwrite existing cookie with rotated refresh token
 	res.cookie("refreshToken", result.newRefreshToken, {
@@ -76,6 +91,11 @@ const logout = catchAsync(async (req: Request, res: Response) => {
 	const currentRefreshToken = req.cookies?.refreshToken;
 	await authService.logout(currentRefreshToken);
 
+	res.clearCookie("accessToken", {
+		httpOnly: true,
+		secure: config.env === "production",
+		sameSite: "strict",
+	});
 	res.clearCookie("refreshToken", {
 		httpOnly: true,
 		secure: config.env === "production",
