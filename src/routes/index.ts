@@ -3,6 +3,7 @@ import httpStatus from "http-status";
 import { authRoutes } from "../modules/auth/auth.routes";
 import { courseRoutes } from "../modules/course/course.routes";
 import { departmentRoutes } from "../modules/department/department.routes";
+import { enrollmentRoutes } from "../modules/enrollment/enrollment.routes";
 import { programRoutes } from "../modules/program/program.routes";
 import { sectionRoutes } from "../modules/section/section.routes";
 import { semesterRoutes } from "../modules/semester/semester.routes";
@@ -47,5 +48,8 @@ router.use("/semesters", semesterRoutes);
 
 // Section routes
 router.use("/sections", sectionRoutes);
+
+// Enrollment routes
+router.use("/enrollments", enrollmentRoutes);
 
 export const apiRoutes = router;

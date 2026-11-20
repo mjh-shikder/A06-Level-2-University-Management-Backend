@@ -15,3 +15,9 @@ enum SemesterStatus {
   ACTIVE
   COMPLETED
 }
+
+enum EnrollmentStatus {
+  ENROLLED
+  DROPPED
+  COMPLETED
+}

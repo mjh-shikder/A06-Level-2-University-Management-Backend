@@ -1,0 +1,19 @@
+model Enrollment {
+  id         String           @id @default(uuid()) @db.Uuid
+  studentId  String           @db.Uuid
+  sectionId  String           @db.Uuid
+  status     EnrollmentStatus @default(ENROLLED)
+  enrolledAt DateTime         @default(now())
+  droppedAt  DateTime?
+  deletedAt  DateTime?
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  student    StudentProfile   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  section    Section          @relation(fields: [sectionId], references: [id], onDelete: Restrict)
+
+  @@unique([studentId, sectionId])
+  @@index([sectionId])
+  @@index([studentId, status])
+  @@index([deletedAt])
+}
