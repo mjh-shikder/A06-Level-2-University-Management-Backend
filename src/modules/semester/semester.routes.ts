@@ -40,7 +40,7 @@ router.get(
 	validate(semesterValidation.getSemesterSchema),
 	semesterController.getSemesterById,
 );
- 
+
 /**
  * PATCH /api/v1/semesters/:id
  * Update an existing semester's details (ADMIN only)

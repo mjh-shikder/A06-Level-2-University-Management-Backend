@@ -54,7 +54,7 @@ const getSemesterById = catchAsync(async (req: Request, res: Response) => {
 
 /**
  * Handle semester update request (ADMIN only).
- */ 
+ */
 const updateSemester = catchAsync(async (req: Request, res: Response) => {
 	const { id } = req.params as { id: string };
 	const result = await semesterService.updateSemester(
