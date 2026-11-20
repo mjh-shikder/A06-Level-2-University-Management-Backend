@@ -2,6 +2,7 @@ import { Router } from "express";
 import httpStatus from "http-status";
 import { authRoutes } from "../modules/auth/auth.routes";
 import { departmentRoutes } from "../modules/department/department.routes";
+import { programRoutes } from "../modules/program/program.routes";
 import { userRoutes } from "../modules/user/user.routes";
 import { sendResponse } from "../utils/sendResponse";
 
@@ -31,5 +32,8 @@ router.use("/users", userRoutes);
 
 // Department routes
 router.use("/departments", departmentRoutes);
+
+// Program routes
+router.use("/programs", programRoutes);
 
 export const apiRoutes = router;
