@@ -17,6 +17,7 @@ model Section {
   instructor    InstructorProfile? @relation(fields: [instructorId], references: [id], onDelete: SetNull)
   enrollments   Enrollment[]
   attendances   Attendance[]
+  exams         Exam[]
 
   @@unique([courseId, semesterId, sectionNumber])
   @@index([courseId])

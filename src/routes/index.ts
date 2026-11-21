@@ -5,6 +5,7 @@ import { authRoutes } from "../modules/auth/auth.routes";
 import { courseRoutes } from "../modules/course/course.routes";
 import { departmentRoutes } from "../modules/department/department.routes";
 import { enrollmentRoutes } from "../modules/enrollment/enrollment.routes";
+import { examRoutes } from "../modules/exam/exam.routes";
 import { programRoutes } from "../modules/program/program.routes";
 import { sectionRoutes } from "../modules/section/section.routes";
 import { semesterRoutes } from "../modules/semester/semester.routes";
@@ -55,5 +56,8 @@ router.use("/enrollments", enrollmentRoutes);
 
 // Attendance routes
 router.use("/attendance", attendanceRoutes);
+
+// Exam routes
+router.use("/exams", examRoutes);
 
 export const apiRoutes = router;

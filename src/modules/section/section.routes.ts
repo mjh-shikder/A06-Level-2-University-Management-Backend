@@ -6,6 +6,8 @@ import { attendanceController } from "../attendance/attendance.controller";
 import { attendanceValidation } from "../attendance/attendance.validation";
 import { enrollmentController } from "../enrollment/enrollment.controller";
 import { enrollmentValidation } from "../enrollment/enrollment.validation";
+import { examController } from "../exam/exam.controller";
+import { examValidation } from "../exam/exam.validation";
 import { sectionController } from "./section.controller";
 import { sectionValidation } from "./section.validation";
 
@@ -79,6 +81,30 @@ router.get(
 	authorize("INSTRUCTOR", "ADMIN"),
 	validate(attendanceValidation.getSectionAttendanceSchema),
 	attendanceController.getSectionAttendance,
+);
+
+/**
+ * POST /api/v1/sections/:sectionId/exams
+ * Create a new exam under a section (INSTRUCTOR, ADMIN)
+ */
+router.post(
+	"/:sectionId/exams",
+	authenticate,
+	authorize("INSTRUCTOR", "ADMIN"),
+	validate(examValidation.createExamSchema),
+	examController.createExam,
+);
+
+/**
+ * GET /api/v1/sections/:sectionId/exams
+ * List exams for a section (INSTRUCTOR, ADMIN)
+ */
+router.get(
+	"/:sectionId/exams",
+	authenticate,
+	authorize("INSTRUCTOR", "ADMIN"),
+	validate(examValidation.getSectionExamsSchema),
+	examController.getSectionExams,
 );
 
 /**
