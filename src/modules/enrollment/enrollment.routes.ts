@@ -2,6 +2,8 @@ import { Router } from "express";
 import { authenticate } from "../../middleware/authenticate";
 import { authorize } from "../../middleware/authorize";
 import { validate } from "../../middleware/validate";
+import { attendanceController } from "../attendance/attendance.controller";
+import { attendanceValidation } from "../attendance/attendance.validation";
 import { enrollmentController } from "./enrollment.controller";
 import { enrollmentValidation } from "./enrollment.validation";
 
@@ -53,6 +55,30 @@ router.get(
 	authorize("ADMIN", "INSTRUCTOR"),
 	validate(enrollmentValidation.getSectionStudentsBySectionIdSchema),
 	enrollmentController.getSectionStudents,
+);
+
+/**
+ * GET /api/v1/enrollments/:id/attendance/summary
+ * Summary metrics for an enrollment (STUDENT (own), INSTRUCTOR, ADMIN)
+ */
+router.get(
+	"/:id/attendance/summary",
+	authenticate,
+	authorize("STUDENT", "INSTRUCTOR", "ADMIN"),
+	validate(attendanceValidation.getEnrollmentAttendanceSummarySchema),
+	attendanceController.getEnrollmentAttendanceSummary,
+);
+
+/**
+ * GET /api/v1/enrollments/:id/attendance
+ * Attendance history for an enrollment (STUDENT (own), INSTRUCTOR, ADMIN)
+ */
+router.get(
+	"/:id/attendance",
+	authenticate,
+	authorize("STUDENT", "INSTRUCTOR", "ADMIN"),
+	validate(attendanceValidation.getEnrollmentAttendanceSchema),
+	attendanceController.getEnrollmentAttendance,
 );
 
 export const enrollmentRoutes = router;

@@ -2,6 +2,8 @@ import { Router } from "express";
 import { authenticate } from "../../middleware/authenticate";
 import { authorize } from "../../middleware/authorize";
 import { validate } from "../../middleware/validate";
+import { attendanceController } from "../attendance/attendance.controller";
+import { attendanceValidation } from "../attendance/attendance.validation";
 import { enrollmentController } from "../enrollment/enrollment.controller";
 import { enrollmentValidation } from "../enrollment/enrollment.validation";
 import { sectionController } from "./section.controller";
@@ -53,6 +55,30 @@ router.get(
 	authorize("ADMIN", "INSTRUCTOR"),
 	validate(enrollmentValidation.getSectionStudentsSchema),
 	enrollmentController.getSectionStudents,
+);
+
+/**
+ * POST /api/v1/sections/:sectionId/attendance
+ * Bulk mark attendance for a section on a specific date (INSTRUCTOR, ADMIN)
+ */
+router.post(
+	"/:sectionId/attendance",
+	authenticate,
+	authorize("INSTRUCTOR", "ADMIN"),
+	validate(attendanceValidation.bulkMarkAttendanceSchema),
+	attendanceController.bulkMarkAttendance,
+);
+
+/**
+ * GET /api/v1/sections/:sectionId/attendance
+ * List attendance records for a section with optional date filter (INSTRUCTOR, ADMIN)
+ */
+router.get(
+	"/:sectionId/attendance",
+	authenticate,
+	authorize("INSTRUCTOR", "ADMIN"),
+	validate(attendanceValidation.getSectionAttendanceSchema),
+	attendanceController.getSectionAttendance,
 );
 
 /**

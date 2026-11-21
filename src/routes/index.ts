@@ -1,5 +1,6 @@
 import { Router } from "express";
 import httpStatus from "http-status";
+import { attendanceRoutes } from "../modules/attendance/attendance.routes";
 import { authRoutes } from "../modules/auth/auth.routes";
 import { courseRoutes } from "../modules/course/course.routes";
 import { departmentRoutes } from "../modules/department/department.routes";
@@ -51,5 +52,8 @@ router.use("/sections", sectionRoutes);
 
 // Enrollment routes
 router.use("/enrollments", enrollmentRoutes);
+
+// Attendance routes
+router.use("/attendance", attendanceRoutes);
 
 export const apiRoutes = router;

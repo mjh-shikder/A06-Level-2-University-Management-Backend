@@ -21,3 +21,10 @@ enum EnrollmentStatus {
   DROPPED
   COMPLETED
 }
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
