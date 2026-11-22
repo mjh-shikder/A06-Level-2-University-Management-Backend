@@ -8,7 +8,7 @@ Designed using **Feature-Based Modular Architecture** combined with the **Route-
 
 - [ERD Diagram](https://drawsql.app/teams/mjh-dev/diagrams/university-management-a6)
 - [Live API](https://university-management-backend-indol.vercel.app/)
-- [Project Explanation](https://your-project-explanation-url)
+- [Project Explanation](https://drive.google.com/file/d/1fitRoNnHFJ8Jaxsx51vGRH_TsipQsx21/view?usp=sharing)
 - [API Docs (Postman collection and environment)](./docs/)
 ---
 
