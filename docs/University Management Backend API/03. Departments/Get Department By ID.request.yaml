@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{baseUrl}}/departments/{{departmentId}}"
+method: GET
+headers:
+  Authorization: Bearer {{accessToken}}
+order: 3000

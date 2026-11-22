@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/admin/users/<USER_UUID>/status"
+method: PATCH
+headers:
+  Authorization: Bearer {{accessToken}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "status": "SUSPENDED"
+    }
+order: 3000

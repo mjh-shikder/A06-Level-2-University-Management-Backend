@@ -1,0 +1,18 @@
+$kind: http-request
+url: "{{baseUrl}}/exams/{{examId}}/marks"
+method: POST
+headers:
+  Authorization: Bearer {{accessToken}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "marks": [
+        {
+          "enrollmentId": "{{enrollmentId}}",
+          "obtainedMarks": 18.5
+        }
+      ]
+    }
+order: 3000

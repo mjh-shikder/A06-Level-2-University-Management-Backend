@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{baseUrl}}/departments/{{departmentId}}"
+method: DELETE
+headers:
+  Authorization: Bearer {{accessToken}}
+order: 5000

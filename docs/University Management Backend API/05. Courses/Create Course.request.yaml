@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{baseUrl}}/courses"
+method: POST
+headers:
+  Authorization: Bearer {{accessToken}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "code": "CSE450",
+      "title": "Cloud Computing & Distributed Systems",
+      "credits": 3,
+      "programId": "{{programId}}",
+      "description": "Distributed architectures and containerization"
+    }
+order: 2000

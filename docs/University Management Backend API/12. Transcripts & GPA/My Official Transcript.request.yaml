@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{baseUrl}}/students/me/transcript"
+method: GET
+headers:
+  Authorization: Bearer {{accessToken}}
+order: 1000

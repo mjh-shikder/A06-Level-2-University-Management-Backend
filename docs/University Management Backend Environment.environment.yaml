@@ -1,0 +1,44 @@
+name: University Management Backend Environment
+values:
+  - key: baseUrl
+    value: 'http://localhost:5000/api/v1'
+  - key: accessToken
+    value: ''
+  - key: refreshToken
+    value: ''
+  - key: adminAccessToken
+    value: ''
+  - key: instructorAccessToken
+    value: ''
+  - key: studentAccessToken
+    value: ''
+  - key: adminEmail
+    value: admin@university.edu
+  - key: adminPassword
+    value: Admin1234!
+  - key: instructorEmail
+    value: dr.smith@university.edu
+  - key: instructorPassword
+    value: Instructor123!
+  - key: studentEmail
+    value: student1@university.edu
+  - key: studentPassword
+    value: Student123!
+  - key: departmentId
+    value: ''
+  - key: programId
+    value: ''
+  - key: courseId
+    value: ''
+  - key: semesterId
+    value: ''
+  - key: sectionId
+    value: ''
+  - key: enrollmentId
+    value: ''
+  - key: examId
+    value: ''
+  - key: invoiceId
+    value: ''
+  - key: studentId
+    value: STU-2026-0001

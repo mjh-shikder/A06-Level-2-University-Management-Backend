@@ -1,0 +1,4 @@
+$kind: collection
+description: |-
+  Production-ready Postman Collection for University Management Backend REST API.
+  Features automated token management, layered endpoints, RBAC testing, and comprehensive payloads.

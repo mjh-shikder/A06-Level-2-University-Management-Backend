@@ -1,0 +1,10 @@
+# Use this workspace to collaborate
+workspace:
+  id: a982fd1d-cbec-44a8-8d47-7e0dc62ae611
+
+localResources:
+  collections:
+    - ../University_Management.postman_collection.json
+    - ../University Management Backend API
+  environments:
+    - ../University Management Backend Environment.environment.yaml

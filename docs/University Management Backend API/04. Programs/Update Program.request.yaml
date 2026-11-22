@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/programs/{{programId}}"
+method: PATCH
+headers:
+  Authorization: Bearer {{accessToken}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "requiredCredits": 132
+    }
+order: 4000

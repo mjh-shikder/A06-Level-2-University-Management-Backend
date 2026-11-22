@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{baseUrl}}/results/sections/{{sectionId}}/compute"
+method: POST
+headers:
+  Authorization: Bearer {{accessToken}}
+order: 1000

@@ -1,0 +1,8 @@
+$kind: http-request
+url: "{{baseUrl}}/sections?semesterId={{semesterId}}"
+method: GET
+headers:
+  Authorization: Bearer {{accessToken}}
+queryParams:
+  semesterId: "{{semesterId}}"
+order: 1000

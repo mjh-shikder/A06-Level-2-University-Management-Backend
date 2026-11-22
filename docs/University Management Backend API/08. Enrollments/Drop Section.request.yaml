@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{baseUrl}}/enrollments/{{enrollmentId}}/drop"
+method: PATCH
+headers:
+  Authorization: Bearer {{accessToken}}
+order: 3000

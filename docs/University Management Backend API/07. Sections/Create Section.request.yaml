@@ -1,0 +1,21 @@
+$kind: http-request
+url: "{{baseUrl}}/sections"
+method: POST
+headers:
+  Authorization: Bearer {{accessToken}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "sectionNumber": "C",
+      "courseId": "{{courseId}}",
+      "semesterId": "{{semesterId}}",
+      "capacity": 30,
+      "room": "Room-305",
+      "schedule": [
+        { "day": "SUNDAY", "startTime": "09:00", "endTime": "10:30" },
+        { "day": "TUESDAY", "startTime": "09:00", "endTime": "10:30" }
+      ]
+    }
+order: 2000

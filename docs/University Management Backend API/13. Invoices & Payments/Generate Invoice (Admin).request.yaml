@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{baseUrl}}/invoices"
+method: POST
+headers:
+  Authorization: Bearer {{accessToken}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "studentId": "{{studentId}}",
+      "semesterId": "{{semesterId}}",
+      "amount": 1200,
+      "dueDate": "2026-12-31T23:59:59.000Z",
+      "description": "Tuition Fee"
+    }
+order: 1000

@@ -1,0 +1,15 @@
+$kind: http-request
+url: "{{baseUrl}}/departments"
+method: POST
+headers:
+  Authorization: Bearer {{accessToken}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "name": "Civil Engineering",
+      "code": "CE",
+      "description": "Department of Civil Engineering"
+    }
+order: 2000

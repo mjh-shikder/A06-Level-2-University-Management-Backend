@@ -1,0 +1,23 @@
+$kind: http-request
+url: "{{baseUrl}}/auth/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "email": "{{adminEmail}}",
+      "password": "{{adminPassword}}"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const res = pm.response.json();
+      if (res.success && res.data) {
+        pm.environment.set('accessToken', res.data.accessToken);
+        pm.environment.set('adminAccessToken', res.data.accessToken);
+        pm.environment.set('refreshToken', res.data.refreshToken);
+      }
+    language: text/javascript
+order: 2000

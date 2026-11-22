@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{baseUrl}}/programs"
+method: POST
+headers:
+  Authorization: Bearer {{accessToken}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "name": "BSc in Civil Engineering",
+      "code": "BSC-CE",
+      "departmentId": "{{departmentId}}",
+      "requiredCredits": 135
+    }
+order: 2000

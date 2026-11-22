@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{baseUrl}}/sections/{{sectionId}}/students"
+method: GET
+headers:
+  Authorization: Bearer {{accessToken}}
+order: 4000

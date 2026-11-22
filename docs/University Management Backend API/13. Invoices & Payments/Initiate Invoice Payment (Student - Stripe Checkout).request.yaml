@@ -1,0 +1,7 @@
+$kind: http-request
+name: Initiate Invoice Payment (Student -> Stripe Checkout)
+url: "{{baseUrl}}/invoices/{{invoiceId}}/pay"
+method: POST
+headers:
+  Authorization: Bearer {{accessToken}}
+order: 4000

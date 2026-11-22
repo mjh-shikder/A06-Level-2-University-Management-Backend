@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/semesters/{{semesterId}}/status"
+method: PATCH
+headers:
+  Authorization: Bearer {{accessToken}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "status": "ACTIVE"
+    }
+order: 3000

@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{baseUrl}}/exams"
+method: POST
+headers:
+  Authorization: Bearer {{accessToken}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "sectionId": "{{sectionId}}",
+      "title": "Quiz 1",
+      "weightPercent": 10,
+      "maxMarks": 20,
+      "examDate": "2026-03-01T10:00:00.000Z"
+    }
+order: 1000

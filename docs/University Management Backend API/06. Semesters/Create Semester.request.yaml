@@ -1,0 +1,19 @@
+$kind: http-request
+url: "{{baseUrl}}/semesters"
+method: POST
+headers:
+  Authorization: Bearer {{accessToken}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "name": "Summer 2026",
+      "year": 2026,
+      "term": "SUMMER",
+      "startDate": "2026-06-01T00:00:00.000Z",
+      "endDate": "2026-08-31T23:59:59.000Z",
+      "registrationStart": "2026-05-15T00:00:00.000Z",
+      "registrationEnd": "2026-05-30T23:59:59.000Z"
+    }
+order: 2000
