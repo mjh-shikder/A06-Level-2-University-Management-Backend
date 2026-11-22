@@ -4,6 +4,12 @@ A scalable, secure, and production-ready **University Management System Backend*
 
 Designed using **Feature-Based Modular Architecture** combined with the **Route-Controller-Service (Layered) Pattern**, incorporating strict Role-Based Access Control (RBAC), row-level concurrency locking, automated prerequisite cycle detection, retake policy grading engines, Stripe checkout payments with idempotent webhooks, and comprehensive transactional audit logging.
 
+## Project Links
+
+- [ERD Diagram](https://your-erd-diagram-url)
+- [Live API](https://your-live-api-url/api/v1)
+- [Project Explanation](https://your-project-explanation-url)
+- [API Docs (Postman collection and environment)](./docs/)
 ---
 
 ## 📑 Table of Contents
