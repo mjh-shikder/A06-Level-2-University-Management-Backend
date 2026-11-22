@@ -18,7 +18,6 @@ router.get(
 	TranscriptController.getMyTranscript,
 );
 
-
 /**
  * GET /api/v1/students/me/gpa
  * GET /api/v1/transcripts/me/gpa

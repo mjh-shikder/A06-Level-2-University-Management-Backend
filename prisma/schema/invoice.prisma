@@ -1,0 +1,21 @@
+model Invoice {
+  id          String        @id @default(uuid()) @db.Uuid
+  studentId   String        @db.Uuid
+  semesterId  String        @db.Uuid
+  amount      Decimal       @db.Decimal(10, 2)
+  dueDate     DateTime
+  status      InvoiceStatus @default(PENDING)
+  description String?
+  deletedAt   DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  student     StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  semester    Semester       @relation(fields: [semesterId], references: [id], onDelete: Restrict)
+  payments    Payment[]
+
+  @@index([studentId])
+  @@index([semesterId])
+  @@index([status])
+  @@index([deletedAt])
+}

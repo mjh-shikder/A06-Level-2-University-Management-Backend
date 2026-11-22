@@ -33,3 +33,17 @@ enum ResultStatus {
   DRAFT
   PUBLISHED
 }
+
+enum InvoiceStatus {
+  PENDING
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum PaymentStatus {
+  INITIATED
+  SUCCESS
+  FAILED
+}
+

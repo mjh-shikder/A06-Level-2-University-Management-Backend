@@ -17,7 +17,8 @@
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "stripe:webhook": "stripe listen --forward-to localhost:5000/api/payment/confirm --events checkout.session.completed,checkout.session.expired,checkout.session.async_payment_failed"
   },
   "keywords": [],
   "author": "",
@@ -52,6 +53,7 @@
     "http-status": "^2.1.0",
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.23.1",
+    "stripe": "^23.2.0",
     "zod": "^4.6.7"
   }
 }

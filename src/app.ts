@@ -35,9 +35,18 @@ app.use(
 	}),
 );
 
+// Stripe Webhook needs the raw Buffer body before JSON parser runs
+app.use("/api/v1/payments/webhook", express.raw({ type: "application/json" }));
+
 // Body parsers
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(
+	express.json({
+		verify: (req, _res, buf) => {
+			(req as unknown as { rawBody?: Buffer }).rawBody = buf;
+		},
+	}),
+);
 
 // Cookie parser
 app.use(cookieParser());

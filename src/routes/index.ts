@@ -6,6 +6,8 @@ import { courseRoutes } from "../modules/course/course.routes";
 import { departmentRoutes } from "../modules/department/department.routes";
 import { enrollmentRoutes } from "../modules/enrollment/enrollment.routes";
 import { examRoutes } from "../modules/exam/exam.routes";
+import { invoiceRoutes } from "../modules/invoice/invoice.routes";
+import { paymentRoutes } from "../modules/payment/payment.routes";
 import { programRoutes } from "../modules/program/program.routes";
 import { resultRoutes } from "../modules/result/result.routes";
 import { sectionRoutes } from "../modules/section/section.routes";
@@ -68,5 +70,11 @@ router.use("/results", resultRoutes);
 // Student & Transcript routes
 router.use("/students", transcriptRoutes);
 router.use("/transcripts", transcriptRoutes);
+
+// Invoice routes
+router.use("/invoices", invoiceRoutes);
+
+// Payment routes
+router.use("/payments", paymentRoutes);
 
 export const apiRoutes = router;

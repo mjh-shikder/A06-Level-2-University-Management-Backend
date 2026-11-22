@@ -11,6 +11,7 @@ model StudentProfile {
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   program        Program?     @relation(fields: [programId], references: [id], onDelete: SetNull)
   enrollments    Enrollment[]
+  invoices       Invoice[]
 
   @@index([deletedAt])
   @@index([programId])
