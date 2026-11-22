@@ -1,5 +1,6 @@
 import { Router } from "express";
 import httpStatus from "http-status";
+import { adminRoutes } from "../modules/admin/admin.routes";
 import { attendanceRoutes } from "../modules/attendance/attendance.routes";
 import { authRoutes } from "../modules/auth/auth.routes";
 import { courseRoutes } from "../modules/course/course.routes";
@@ -76,5 +77,8 @@ router.use("/invoices", invoiceRoutes);
 
 // Payment routes
 router.use("/payments", paymentRoutes);
+
+// Admin operations routes
+router.use("/admin", adminRoutes);
 
 export const apiRoutes = router;
