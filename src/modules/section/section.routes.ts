@@ -8,6 +8,8 @@ import { enrollmentController } from "../enrollment/enrollment.controller";
 import { enrollmentValidation } from "../enrollment/enrollment.validation";
 import { examController } from "../exam/exam.controller";
 import { examValidation } from "../exam/exam.validation";
+import { resultController } from "../result/result.controller";
+import { resultValidation } from "../result/result.validation";
 import { sectionController } from "./section.controller";
 import { sectionValidation } from "./section.validation";
 
@@ -105,6 +107,54 @@ router.get(
 	authorize("INSTRUCTOR", "ADMIN"),
 	validate(examValidation.getSectionExamsSchema),
 	examController.getSectionExams,
+);
+
+/**
+ * POST /api/v1/sections/:sectionId/results/compute
+ * Compute section results (INSTRUCTOR, ADMIN)
+ */
+router.post(
+	"/:sectionId/results/compute",
+	authenticate,
+	authorize("INSTRUCTOR", "ADMIN"),
+	validate(resultValidation.sectionIdParamSchema),
+	resultController.computeSectionResults,
+);
+
+/**
+ * GET /api/v1/sections/:sectionId/results
+ * List section results (INSTRUCTOR, ADMIN)
+ */
+router.get(
+	"/:sectionId/results",
+	authenticate,
+	authorize("INSTRUCTOR", "ADMIN"),
+	validate(resultValidation.getSectionResultsSchema),
+	resultController.getSectionResults,
+);
+
+/**
+ * PATCH /api/v1/sections/:sectionId/results/publish
+ * Publish all DRAFT results for a section (ADMIN only)
+ */
+router.patch(
+	"/:sectionId/results/publish",
+	authenticate,
+	authorize("ADMIN"),
+	validate(resultValidation.sectionIdParamSchema),
+	resultController.publishSectionResults,
+);
+
+/**
+ * PATCH /api/v1/sections/:sectionId/results/unpublish
+ * Unpublish results for a section (ADMIN only)
+ */
+router.patch(
+	"/:sectionId/results/unpublish",
+	authenticate,
+	authorize("ADMIN"),
+	validate(resultValidation.sectionIdParamSchema),
+	resultController.unpublishSectionResults,
 );
 
 /**

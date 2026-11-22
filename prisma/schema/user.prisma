@@ -14,6 +14,7 @@ model User {
   instructorProfile InstructorProfile?
   refreshTokens     RefreshToken[]
   auditLogs         AuditLog[]
+  publishedResults  Result[]           @relation("ResultPublisher")
 
   @@index([role])
   @@index([status])

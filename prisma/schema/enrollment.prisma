@@ -13,6 +13,7 @@ model Enrollment {
   section     Section          @relation(fields: [sectionId], references: [id], onDelete: Restrict)
   attendances Attendance[]
   examMarks   ExamMark[]
+  result      Result?
 
   @@unique([studentId, sectionId])
   @@index([sectionId])

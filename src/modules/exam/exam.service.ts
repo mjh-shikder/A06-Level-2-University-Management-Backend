@@ -267,6 +267,21 @@ const updateExam = async (
 			}
 		}
 
+		// Lock rule: marks cannot be edited if results are already published
+		const publishedResult = await tx.result.findFirst({
+			where: {
+				enrollment: { sectionId: exam.sectionId },
+				status: "PUBLISHED",
+			},
+		});
+
+		if (publishedResult) {
+			throw new AppError(
+				httpStatus.BAD_REQUEST,
+				"Cannot modify marks: results for this section have already been published",
+			);
+		}
+
 		// Weight validation if updating weightPercent
 		if (payload.weightPercent !== undefined) {
 			const otherExams = await tx.exam.findMany({
@@ -462,6 +477,21 @@ const bulkEnterMarks = async (
 					"You are not assigned as the instructor for this section",
 				);
 			}
+		}
+
+		// Lock rule: marks cannot be edited if results are already published
+		const publishedResult = await tx.result.findFirst({
+			where: {
+				enrollment: { sectionId: exam.sectionId },
+				status: "PUBLISHED",
+			},
+		});
+
+		if (publishedResult) {
+			throw new AppError(
+				httpStatus.BAD_REQUEST,
+				"Cannot modify marks: results for this section have already been published",
+			);
 		}
 
 		const maxMarksNum = Number(exam.maxMarks);

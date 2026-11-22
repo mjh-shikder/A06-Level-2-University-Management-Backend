@@ -28,3 +28,8 @@ enum AttendanceStatus {
   LATE
   EXCUSED
 }
+
+enum ResultStatus {
+  DRAFT
+  PUBLISHED
+}
