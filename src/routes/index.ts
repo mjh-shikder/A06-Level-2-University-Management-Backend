@@ -10,6 +10,7 @@ import { programRoutes } from "../modules/program/program.routes";
 import { resultRoutes } from "../modules/result/result.routes";
 import { sectionRoutes } from "../modules/section/section.routes";
 import { semesterRoutes } from "../modules/semester/semester.routes";
+import { transcriptRoutes } from "../modules/transcript/transcript.routes";
 import { userRoutes } from "../modules/user/user.routes";
 import { sendResponse } from "../utils/sendResponse";
 
@@ -63,5 +64,9 @@ router.use("/exams", examRoutes);
 
 // Result routes
 router.use("/results", resultRoutes);
+
+// Student & Transcript routes
+router.use("/students", transcriptRoutes);
+router.use("/transcripts", transcriptRoutes);
 
 export const apiRoutes = router;
