@@ -8,6 +8,8 @@ import type {
 	TChangePasswordPayload,
 	TUpdateProfilePayload,
 } from "./user.interface";
+import { UploadApiResponse } from "cloudinary";
+import { cloudinary } from "../../lib/cloudinary";
 
 /**
  * Retrieve the current authenticated user's profile with linked academic profile.
@@ -183,8 +185,65 @@ const changePassword = async (
 	});
 };
 
+
+const updateProfileImage = async (buffer: Buffer, userId: string) => { 
+
+	const currentUser = await prisma.user.findUnique({
+		where: {
+			id: userId
+		},
+		select: {
+			imagePublicId: true,
+			imageUrl: true,
+		}
+	})
+
+	// ? clodinary uploader fucntion
+	  const cloudinaryResult = await new Promise<UploadApiResponse>((resolve, reject) => {
+    cloudinary.uploader
+      .upload_stream({ resource_type: "image" }, 
+        async (error, reslut) => {
+        if (error) {
+         return reject(error)
+        }
+
+        if(!reslut){
+          return reject(new Error("No Result returned from Cloudinary"))
+        }
+
+        resolve(reslut)
+
+      })
+      .end(buffer);
+	  });
+
+
+	//   ? Updating the umageURL and imagepublicId in the database
+	    const updatedUser = await prisma.user.update({
+          where: {
+            id: userId,
+          },
+          data: {
+            imageUrl: cloudinaryResult?.secure_url,
+            imagePublicId: cloudinaryResult?.public_id,
+          },
+          omit:{
+            passwordHash:true
+          }
+		});
+
+	// ? Deleting the previous image from cloudinary if it exists
+	if(currentUser?.imagePublicId){
+		await cloudinary.uploader.destroy(currentUser.imagePublicId)
+	}
+
+	return updatedUser;
+
+}
+
 export const userService = {
 	getMe,
 	updateMe,
 	changePassword,
+	updateProfileImage,
 };

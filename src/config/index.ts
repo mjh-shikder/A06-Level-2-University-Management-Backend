@@ -64,6 +64,11 @@ const config = {
 	database_url: env.DATABASE_URL,
 	frontend_url: env.FRONTEND_URL,
 	backend_url: env.BACKEND_URL,
+
+	// Cloudinary configuration
+	cloudinary_cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
+	cloudinary_api_key: process.env.CLOUDINARY_API_KEY!,
+	cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET!,
 };
 
 export default config;
