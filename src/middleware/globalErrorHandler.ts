@@ -1,5 +1,6 @@
 import type { ErrorRequestHandler } from "express";
 import httpStatus from "http-status";
+import multer from "multer";
 import { ZodError } from "zod";
 import config from "../config";
 import { AppError } from "../errors/AppError";
@@ -35,6 +36,16 @@ export const globalErrorHandler: ErrorRequestHandler = (
 			field: issue.path.join("."),
 			message: issue.message,
 		}));
+	} else if (err instanceof multer.MulterError) {
+		statusCode =
+			err.code === "LIMIT_FILE_SIZE"
+				? httpStatus.REQUEST_ENTITY_TOO_LARGE
+				: httpStatus.BAD_REQUEST;
+		message =
+			err.code === "LIMIT_FILE_SIZE"
+				? "Image must be 5 MB or smaller"
+				: err.message;
+		errors = [{ message }];
 	} else if (err?.name === "PrismaClientKnownRequestError") {
 		// Prisma known request errors
 		if (err.code === "P2002") {

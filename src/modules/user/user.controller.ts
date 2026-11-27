@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
+import { AppError } from "../../errors/AppError";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { userService } from "./user.service";
@@ -46,23 +47,27 @@ const changePassword = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
-const updateProfileImage = catchAsync(async (req: Request, res: Response, next: NextFunction) =>{ 
+const updateProfileImage = catchAsync(
+	async (req: Request, res: Response, next: NextFunction) => {
+		if (!req.file) {
+			throw new AppError(httpStatus.BAD_REQUEST, "No file uploaded");
+		}
 
-	if (!req.file) { 
-		throw new Error("No file uploaded");
-	}
+		const userId = req.user.id;
 
-	const userId = req.user.id;
+		const result = await userService.updateProfileImage(
+			req.file?.buffer,
+			userId,
+		);
 
-	const result = await userService.updateProfileImage(req.file?.buffer, userId);
-
-	    sendResponse(res, {
-        statusCode: 200,
-        success: true,
-        message: "Profile image uploaded successfully",
-        data: result,
-    });
-})
+		sendResponse(res, {
+			statusCode: 200,
+			success: true,
+			message: "Profile image uploaded successfully",
+			data: result,
+		});
+	},
+);
 
 export const userController = {
 	getMe,
