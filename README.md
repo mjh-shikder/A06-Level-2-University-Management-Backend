@@ -76,6 +76,7 @@ Designed using **Feature-Based Modular Architecture** combined with the **Route-
 - **Database & ORM**: PostgreSQL, Prisma ORM 7.10+ with `@prisma/adapter-pg` driver adapter
 - **Validation**: Zod 4.6+
 - **Security & Utilities**: Helmet, CORS, Express-Rate-Limit, Cookie-Parser, BCrypt, JsonWebToken, HTTP-Status
+- **Media & File Uploads**: Multer (memory storage, 5 MB limit), Cloudinary
 - **Payments**: Stripe SDK
 - **Code Quality**: Biome (Linting & Formatting)
 - **Testing**: Vitest, Supertest
@@ -207,6 +208,9 @@ erDiagram
    STRIPE_CURRENCY="usd"
    ENROLLMENT_BLOCK_ON_UNPAID=true
    MAX_CREDITS_PER_SEMESTER=18
+   CLOUDINARY_CLOUD_NAME="your-cloudinary-cloud-name"
+   CLOUDINARY_API_KEY="your-cloudinary-api-key"
+   CLOUDINARY_API_SECRET="your-cloudinary-api-secret"
    ```
 
 ### Database Migration & Seeding
@@ -266,6 +270,9 @@ erDiagram
 | `STRIPE_CURRENCY` | `string` | `usd` | Currency for Stripe Checkout payments |
 | `ENROLLMENT_BLOCK_ON_UNPAID`| `boolean` | `true` | Prevents enrollment if student has unpaid invoices |
 | `MAX_CREDITS_PER_SEMESTER` | `number` | `18` | Maximum course credits a student can take per term |
+| `CLOUDINARY_CLOUD_NAME` | `string` | *(Required)* | Cloudinary cloud name for profile image storage |
+| `CLOUDINARY_API_KEY` | `string` | *(Required)* | Cloudinary API key |
+| `CLOUDINARY_API_SECRET` | `string` | *(Required)* | Cloudinary API secret |
 
 ---
 
@@ -290,9 +297,10 @@ All endpoints are versioned under `/api/v1`.
 ### 2. User Profile
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
-| `GET` | `/api/v1/users/me` | Authenticated | Get current user profile |
+| `GET` | `/api/v1/users/me` | Authenticated | Get current user profile (includes `imageUrl`, `imagePublicId`) |
 | `PATCH` | `/api/v1/users/me` | Authenticated | Update name or profile information |
-| `POST` | `/api/v1/users/me/change-password` | Authenticated | Update password and revoke other sessions |
+| `PATCH` | `/api/v1/users/me/password` | Authenticated | Update password and revoke other sessions |
+| `PATCH` | `/api/v1/users/profile-image` | `ADMIN`, `STUDENT`, `INSTRUCTOR` | Upload & update profile image (`multipart/form-data`, `profileImage`, max 5 MB) |
 
 ### 3. Departments
 | Method | Endpoint | Access | Description |
@@ -483,11 +491,11 @@ npm run build
 ## 📬 Postman Collection & Verification
 
 A complete Postman workspace is pre-packaged in the repository under [docs/](file:///d:/Next-Level/Assignments/A06/University_Management_Backend/docs/):
-- **Collection**: [docs/University_Management.postman_collection.json](file:///d:/Next-Level/Assignments/A06/University_Management_Backend/docs/University_Management.postman_collection.json)
-- **Environment**: [docs/University_Management.postman_environment.json](file:///d:/Next-Level/Assignments/A06/University_Management_Backend/docs/University_Management.postman_environment.json)
+- **Collection**: [docs/University Management Backend API/](file:///d:/Next-Level/Assignments/A06/University_Management_Backend/docs/University%20Management%20Backend%20API/)
+- **Environment**: [docs/University Management Backend Environment.environment.yaml](file:///d:/Next-Level/Assignments/A06/University_Management_Backend/docs/University%20Management%20Backend%20Environment.environment.yaml)
 
 ### Importing & Running:
-1. Open Postman $\to$ Click **Import** $\to$ Select both files from `docs/`.
+1. Open Postman $\to$ Click **Import** (or open the workspace folder `docs/`) to load the collection and environment.
 2. Select the **University Management Backend Environment** in the top-right environment selector.
 3. Run the **Login - Admin** request:
    - The test script automatically stores the access token into `{{accessToken}}` and `{{adminAccessToken}}`.
@@ -526,6 +534,9 @@ A complete Postman workspace is pre-packaged in the repository under [docs/](fil
    - `STRIPE_CURRENCY`: `usd`
    - `ENROLLMENT_BLOCK_ON_UNPAID`: `true`
    - `MAX_CREDITS_PER_SEMESTER`: `18`
+   - `CLOUDINARY_CLOUD_NAME`: Your Cloudinary cloud name
+   - `CLOUDINARY_API_KEY`: Your Cloudinary API key
+   - `CLOUDINARY_API_SECRET`: Your Cloudinary API secret
 
 ### 3. Stripe Webhook Endpoint Configuration
 In your Stripe Dashboard:
