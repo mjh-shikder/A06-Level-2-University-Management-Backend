@@ -24,6 +24,8 @@ const getMe = async (userId: string) => {
 			lastName: true,
 			role: true,
 			status: true,
+			imageUrl: true,     
+  			imagePublicId: true, 
 			createdAt: true,
 			updatedAt: true,
 			studentProfile: {
@@ -86,6 +88,8 @@ const updateMe = async (
 				lastName: true,
 				role: true,
 				status: true,
+				imageUrl: true,     
+  				imagePublicId: true,
 				createdAt: true,
 				updatedAt: true,
 				studentProfile: {

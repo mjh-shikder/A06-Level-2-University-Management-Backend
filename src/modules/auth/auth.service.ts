@@ -201,6 +201,8 @@ const login = async (payload: TLoginPayload): Promise<TLoginResponse> => {
 			lastName: true,
 			role: true,
 			status: true,
+			imageUrl: true,   
+  			imagePublicId: true,  
 		},
 	});
 
@@ -406,6 +408,8 @@ const getMe = async (userId: string) => {
 			lastName: true,
 			role: true,
 			status: true,
+			imageUrl: true,       
+  			imagePublicId: true,
 			createdAt: true,
 			updatedAt: true,
 			studentProfile: {
